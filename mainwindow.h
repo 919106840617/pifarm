@@ -22,6 +22,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
     pigfarm *p;
     int time;
     QTimer *timer;

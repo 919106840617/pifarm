@@ -21,7 +21,7 @@ bool pig::judge()
 {
     if (time > 365 || weight >150)
     {
-        qDebug() << kind << " " << weight << " " << time << endl;
+        //qDebug() << kind << " " << weight << " " << time << endl;
         return 1;
     }
     else
@@ -36,6 +36,11 @@ void pig::setnext(pig* a)
 pig* pig::getnext()
 {
     return next;
+}
+
+int pig::getkind()
+{
+    return kind;
 }
 
 float pig::getprice()
@@ -54,4 +59,14 @@ float pig::getprice()
         return 0.0;
         break;
     };
+}
+
+float pig::getweight()
+{
+    return weight;
+}
+int pig::gettime()
+{
+//    qDebug() << weight << " " << time << " " << kind;
+    return time;
 }

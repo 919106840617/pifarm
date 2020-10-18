@@ -14,7 +14,11 @@ public:
     bool judge();
     void setnext(pig*);
     pig* getnext();
+    int getkind();
     float getprice();
+
+    float getweight();
+    int gettime();
 };
 
 #endif // PIG_H

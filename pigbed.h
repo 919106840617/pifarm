@@ -16,6 +16,10 @@ public:
     float sell();
     int getnum();
     bool checkBlack();
+
+    int* getkind();
+    pig* getpig(int);
+    int* get();
 };
 
 #endif // PIGBED_H

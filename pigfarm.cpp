@@ -1,6 +1,7 @@
 #include "pigfarm.h"
 #include <QtGlobal>
 #include<QTime>
+#include <QDebug>
 
 pigfarm::pigfarm()
 {
@@ -18,6 +19,11 @@ pigfarm::pigfarm()
     {
         p[i].add();
     }
+}
+
+pigfarm::~pigfarm()
+{
+    delete p;
 }
 
 void pigfarm::growth()
@@ -81,4 +87,34 @@ void pigfarm::add()
         if (n==0)
             break;
     }
+}
+
+int* pigfarm::find(int a)
+{
+    return p[a].getkind();
+}
+
+bool pigfarm::check(int pigbed,int pig)
+{
+    return p[pigbed].getnum()>pig;
+}
+
+pig* pigfarm::getpig(int m,int n)
+{
+    return p[m].getpig(n);
+}
+
+int* pigfarm::get()
+{
+    int* ptr;
+    int* n = new int[9]{0};
+    for (int i=0; i<100; i++)
+    {
+        ptr = p[i].get();
+        for (int j=0; j<9; j++)
+            n[j]+=ptr[j];
+        delete []ptr;
+        ptr = nullptr;
+    }
+    return n;
 }

@@ -4,13 +4,19 @@
 
 class pigfarm
 {
-    pigbed *p = new pigbed[100]();
+    pigbed *p = new pigbed[100];
     int blackbed;
 public:
     pigfarm();
+    ~pigfarm();
     void growth();
     float sell();
     void add();
+
+    int* find(int);
+    bool check(int,int);
+    pig* getpig(int,int);
+    int* get();
 };
 
 #endif // PIGFARM_H
