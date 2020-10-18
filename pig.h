@@ -19,6 +19,8 @@ public:
 
     float getweight();
     int gettime();
+
+    pig(int, int, float);
 };
 
 #endif // PIG_H

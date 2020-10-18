@@ -5,6 +5,7 @@
 class pigbed
 {
     pig* head;
+    pig* last;
     int num;
     bool black;
 
@@ -20,6 +21,9 @@ public:
     int* getkind();
     pig* getpig(int);
     int* get();
+
+    void add(int, int, float);
+    void over();
 };
 
 #endif // PIGBED_H

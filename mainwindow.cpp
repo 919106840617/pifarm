@@ -2,18 +2,48 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QString>
+#include <QFile>
+#include <QTextStream>
+#include <string>
+#define cout qDebug()<<"["<<__FILE__":"<<__LINE__<<"]"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    time = 0;
+    QFile file("time.dat");
+    if (file.exists()&&file.size())
+    {
+        file.open(QIODevice::ReadOnly);
+        QDataStream in(&file);
+        in >> time;
+//        cout << time;
+    }
+    else
+    {
+        time = 0;
+    }
+    ui->time->setText(QString::number(time));
     p = new pigfarm();//初始化
+
+    file.setFileName("account.txt");
+    if (file.exists())
+    {
+        file.open(QIODevice::ReadOnly);
+        QTextStream in(&file);
+        str = in.readAll();
+        file.close();
+    }
+    else
+    {
+        str = "";
+    }
+    cout<<qPrintable(str);
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &MainWindow::update);
-    timer->setSingleShot(0);//设置加速器
+    timer->setSingleShot(0);//设置计时器
 
     ui->lineEdit->setValidator(new QIntValidator(0, 99, this));
     ui->pigbedEdit->setValidator(new QIntValidator(0, 99, this));
@@ -30,11 +60,12 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
                 else
                 {
-                    timer->start(100);
+                    timer->start(10);
                     ui->console->setText("pause");
                 }
             }
             );//开始与暂停
+
 
     {
     connect(ui->searchnum, &QPushButton::clicked,
@@ -76,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }//换页
 
 
+    {
     connect(ui->search1, &QPushButton::clicked,
             [=]()
             {
@@ -88,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->xiaohua->setText(QString::number(numlist[2]));
                 ui->dahua->setText(QString::number(numlist[3]));
             }
-            );
+            );//查询某猪圈
 
     connect(ui->search2, &QPushButton::clicked,
             [=]()
@@ -123,7 +155,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     ui->kind->setText("未找到该猪");
                 }
             }
-            );
+            );//查询某猪
 
     connect(ui->search3, &QPushButton::clicked,
             [=]()
@@ -139,13 +171,14 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->label8->setText(QString::number(n[7]));
                 ui->label9->setText(QString::number(n[8]));
             }
-            );
-
+            );//查询整个猪圈
+    }//查询
 
 }
 
 MainWindow::~MainWindow()
 {
+    save();
     delete ui;
     delete p;
     delete timer;
@@ -163,6 +196,61 @@ void MainWindow::update()
         money += p->sell();
         p->add();
         //qDebug() << money;
-        ui->price->setText(QString::number(money));
+        ui->price->setText(QString::number(money,'f',0));
+
+        str += "day" + QString::number(time) + ": " + QString::number(money,'f',0) + "\n";
+        if (time>5*365)
+        {
+            int n = 0;
+            while (str.at(n) != '\n')
+                n++;
+            str.remove(0,n+1);
+        }
+        cout << qPrintable(str);
     }
+}
+
+void MainWindow::on_clear_clicked()
+{
+    timer->stop();
+    ui->console->setText("start");
+
+    delete p;
+    time = 0;
+    ui->time->setText(QString::number(time));
+    ui->price->setText("");
+
+    QFile file("save.dat");
+    if (file.exists())
+    {
+        file.remove();
+    }
+    file.setFileName("account.txt");
+    if (file.exists())
+    {
+        file.remove();
+    }
+    file.setFileName("time.dat");
+    if (file.exists())
+    {
+        file.remove();
+    }
+
+    str = "";
+    p = new pigfarm();
+}
+
+void MainWindow::save()
+{
+    QFile file("time.dat");
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+    out << time;
+    file.close();
+
+    file.setFileName("account.txt");
+    file.open(QIODevice::WriteOnly);
+    QTextStream textout(&file);
+    textout << str;
+    file.close();
 }

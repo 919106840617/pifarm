@@ -70,3 +70,10 @@ int pig::gettime()
 //    qDebug() << weight << " " << time << " " << kind;
     return time;
 }
+
+pig::pig(int k, int t, float w)
+{
+    kind = k;
+    time = t;
+    weight = w;
+}

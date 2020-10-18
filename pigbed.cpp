@@ -2,6 +2,7 @@
 #include <QtGlobal>
 #include <QTime>
 #include <QDebug>
+
 int hua()
 {
     return qrand() % 2 + 2;
@@ -10,6 +11,7 @@ int hua()
 pigbed::pigbed()
 {
     head = nullptr;
+    last = nullptr;
     num = 0;
     black = 0;
 }
@@ -163,4 +165,36 @@ int* pigbed::get()
         p = p->getnext();
     }
     return n;
+}
+
+void pigbed::add(int k, int t, float w)
+{
+    pig *a;
+    if (last == nullptr)
+    {
+        last = new pig(k, t, w);
+        if(k==1)
+            black = 1;
+        else
+            black = 0;
+    }
+    else
+    {
+        a = new pig(k, t, w);
+        a->setnext(last);
+        last = a;
+    }
+    num++;
+}
+
+void pigbed::over()
+{
+    pig *a;
+    for (int i=0; i<num; i++)
+    {
+        a = last->getnext();
+        last->setnext(head);
+        head = last;
+        last =a;
+    }
 }

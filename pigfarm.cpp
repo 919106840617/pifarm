@@ -1,28 +1,40 @@
 #include "pigfarm.h"
 #include <QtGlobal>
-#include<QTime>
+#include <QTime>
 #include <QDebug>
+#include <QFile>
+#include <QDataStream>
+#include <QTextStream>
 
 pigfarm::pigfarm()
 {
-    int n = 0;
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-    n = qrand() % 1001;
-    for (int i = 0; i<100; i++)
+    QFile file("save.dat");
+    if (file.exists()&&file.size())
     {
-        for (int j=0; j<n/100; j++)
+        read();
+    }
+    else
+    {
+        int n = 0;
+        qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+        n = qrand() % 1001;
+        for (int i = 0; i<100; i++)
+        {
+            for (int j=0; j<n/100; j++)
+            {
+                p[i].add();
+            }
+        }
+        for (int i = 0; i<n%100; i++)
         {
             p[i].add();
         }
-    }
-    for (int i = 0; i<n%100; i++)
-    {
-        p[i].add();
     }
 }
 
 pigfarm::~pigfarm()
 {
+    save();
     delete p;
 }
 
@@ -117,4 +129,52 @@ int* pigfarm::get()
         ptr = nullptr;
     }
     return n;
+}
+
+void pigfarm::save()
+{
+    int n, kind, time;
+    float weight;
+    pig* info;
+    QFile file("save.dat");
+    file.open(QIODevice::WriteOnly);
+    QDataStream out(&file);
+    for (int i=0; i<100; i++)
+    {
+        n = p[i].getnum();
+        out << n;
+//        qDebug()<<n<<endl;
+        for (int j=0; j<n; j++)
+        {
+            info = p[i].getpig(j);
+            kind = info->getkind();
+            time = info->gettime();
+            weight = info->getweight();
+            out << kind << time << weight;
+//            qDebug() <<kind << " " << time<<" "<<weight<<endl;
+        }
+    }
+    file.close();
+}
+
+void pigfarm::read()
+{
+    int n = 0, kind, time;
+    float weight;
+    QFile file("save.dat");
+    file.open(QIODevice::ReadOnly);
+    QDataStream in(&file);
+    for (int i=0; i<100; i++)
+    {
+        in >> n;
+//        qDebug() << n <<endl;
+        for (int j=0; j<n; j++)
+        {
+            in >> kind >> time >> weight;
+//            qDebug() << kind << " " <<time<<" "<<weight<<endl;
+            p[i].add(kind,time,weight);
+        }
+        p[i].over();
+    }
+    file.close();
 }

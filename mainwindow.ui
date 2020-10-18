@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>729</width>
-    <height>348</height>
+    <width>736</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,10 +132,10 @@
    <widget class="QStackedWidget" name="stackedWidget">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>30</y>
+      <x>250</x>
+      <y>0</y>
       <width>481</width>
-      <height>204</height>
+      <height>241</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -380,21 +380,21 @@
          <item row="1" column="1">
           <widget class="QLabel" name="label1">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="label2">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="1" column="3">
           <widget class="QLabel" name="label3">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -429,21 +429,21 @@
          <item row="3" column="1">
           <widget class="QLabel" name="label4">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="3" column="2">
           <widget class="QLabel" name="label5">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="3" column="3">
           <widget class="QLabel" name="label6">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -478,21 +478,21 @@
          <item row="5" column="1">
           <widget class="QLabel" name="label7">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="5" column="2">
           <widget class="QLabel" name="label8">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
          <item row="5" column="3">
           <widget class="QLabel" name="label9">
            <property name="text">
-            <string>TextLabel</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -502,13 +502,26 @@
      </layout>
     </widget>
    </widget>
+   <widget class="QPushButton" name="clear">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>200</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>clear</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>729</width>
+     <width>736</width>
      <height>26</height>
     </rect>
    </property>

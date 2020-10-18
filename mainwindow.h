@@ -20,12 +20,18 @@ public:
     void update();
     ~MainWindow();
 
+private slots:
+    void on_clear_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     pigfarm *p;
     int time;
     QTimer *timer;
+
+    QString str;
+    void save();
 };
 
 #endif // MAINWINDOW_H

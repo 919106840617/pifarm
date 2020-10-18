@@ -6,6 +6,9 @@ class pigfarm
 {
     pigbed *p = new pigbed[100];
     int blackbed;
+    void save();
+    void read();
+
 public:
     pigfarm();
     ~pigfarm();
@@ -17,6 +20,7 @@ public:
     bool check(int,int);
     pig* getpig(int,int);
     int* get();
+
 };
 
 #endif // PIGFARM_H
