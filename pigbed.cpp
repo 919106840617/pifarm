@@ -2,6 +2,7 @@
 #include <QtGlobal>
 #include <QTime>
 #include <QDebug>
+#define cout qDebug()<<"["<<__FILE__":"<<__LINE__<<"]"
 
 int hua()
 {
@@ -14,6 +15,9 @@ pigbed::pigbed()
     last = nullptr;
     num = 0;
     black = 0;
+    sick = 0;
+    deadprobability = 5;
+    dead = 0;
 }
 
 pigbed::~pigbed()
@@ -54,6 +58,26 @@ void pigbed::add()
     num++;
 }
 
+void pigbed::add(int k, float w)
+{
+    pig *p;
+    if (head == nullptr)
+    {
+        head = new pig(w,k);
+        if(k==1)
+            black = 1;
+        else
+            black = 0;
+    }
+    else
+    {
+        p = new pig(w,k);
+        p->setnext(head);
+        head = p;
+    }
+    num++;
+}
+
 void pigbed::growth()
 {
     pig* p = head;
@@ -70,7 +94,7 @@ float pigbed::sell()
     if (head == nullptr)
         return money;
     pig *p;
-    while (head!=nullptr && head->judge())
+    while (head!=nullptr && head->judge()&&!head->isSick())
     {
         money += head->getprice();
         p = head;
@@ -84,7 +108,7 @@ float pigbed::sell()
     p = head->getnext();
     while (p!=nullptr)
     {
-        if (p->judge())
+        if (p->judge()&&!head->isSick())
         {
             money += p->getprice();
             prep->setnext(p->getnext());
@@ -167,12 +191,17 @@ int* pigbed::get()
     return n;
 }
 
-void pigbed::add(int k, int t, float w)
+void pigbed::addback(int k, int t, float w, bool s)
 {
     pig *a;
     if (last == nullptr)
     {
         last = new pig(k, t, w);
+        if (s)
+        {
+            last->getsick();
+            sick++;
+        }
         if(k==1)
             black = 1;
         else
@@ -181,6 +210,11 @@ void pigbed::add(int k, int t, float w)
     else
     {
         a = new pig(k, t, w);
+        if (s)
+        {
+            a->getsick();
+            sick++;
+        }
         a->setnext(last);
         last = a;
     }
@@ -196,5 +230,151 @@ void pigbed::over()
         last->setnext(head);
         head = last;
         last =a;
+    }
+    last = nullptr;
+}
+
+void pigbed::diseaseSpread()
+{
+    bool check = false;
+    pig* p = head;
+    for (int i=0; i<num; i++)
+    {
+        if (p->isSick())
+        {
+
+            check = true;
+            break;
+        }
+        p = p->getnext();
+    }
+    p = head;
+    if (check)
+    {
+        for (int i=0; i<num; i++)
+        {
+            if (!p->isSick()&&qrand()%2)
+            {
+                p->getsick();
+                sick++;
+            }
+            p = p->getnext();
+        }
+    }
+}
+
+void pigbed::PigGetSick()
+{
+    pig * p = head;
+    for (int i=0; i<num; i++)
+    {
+        if (!p->isSick()&&qrand()%101<=15)
+        {
+            p->getsick();
+            sick++;
+        }
+        p = p->getnext();
+    }
+}
+
+int pigbed::getSickNum()
+{
+    return sick;
+}
+
+void pigbed::setDeadProbability(int p)
+{
+    deadprobability = p;
+}
+
+int pigbed::getDeadProbability()
+{
+    return deadprobability;
+}
+
+void pigbed::sickToDeath()
+{
+    pig *p;
+    while (head!=nullptr && head->isSick() && qrand()%1001<=deadprobability)
+    {
+       sick--;
+       dead++;
+       p = head;
+       head = head->getnext();
+       delete []p;
+       num--;
+    }
+    if (head == nullptr)
+        return;
+    pig* prep = head;
+    p = head->getnext();
+    while (p!=nullptr)
+    {
+        if (p->isSick()&&qrand()%1001<=deadprobability)
+        {
+            sick--;
+            dead++;
+            prep->setnext(p->getnext());
+            delete []p;
+            num--;
+            p = prep->getnext();
+            continue;
+        }
+        prep = prep->getnext();
+        p = p->getnext();
+    }
+}
+
+
+int pigbed::getDeadNum()
+{
+    return dead;
+}
+
+void pigbed::setDeadNum(int n)
+{
+    dead = n;
+}
+
+void pigbed::startSick()
+{
+    pig * p = head;
+    int n = qrand() % num;
+    for (int i=0; i<n; i++)
+        p = p->getnext();
+    p->getsick();
+    sick++;
+}
+
+void pigbed::sickOver()
+{
+    pig *p;
+    while (head!=nullptr && head->isSick())
+    {
+       sick--;
+       dead++;
+       p = head;
+       head = head->getnext();
+       delete []p;
+       num--;
+    }
+    if (head == nullptr)
+        return;
+    pig* prep = head;
+    p = head->getnext();
+    while (p!=nullptr)
+    {
+        if (p->isSick())
+        {
+            sick--;
+            dead++;
+            prep->setnext(p->getnext());
+            delete []p;
+            num--;
+            p = prep->getnext();
+            continue;
+        }
+        prep = prep->getnext();
+        p = p->getnext();
     }
 }

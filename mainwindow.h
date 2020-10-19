@@ -23,15 +23,27 @@ public:
 private slots:
     void on_clear_clicked();
 
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     pigfarm *p;
-    int time;
+    int time, sicktime;
     QTimer *timer;
 
     QString str;
     void save();
+
+
+    void update1();
+    void update2();
+    void update3();
+    void update4();
 };
 
 #endif // MAINWINDOW_H

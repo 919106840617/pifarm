@@ -5,6 +5,8 @@
 #include <QFile>
 #include <QDataStream>
 #include <QTextStream>
+#include <QMessageBox>
+#define cout qDebug()<<"["<<__FILE__":"<<__LINE__<<"]"
 
 pigfarm::pigfarm()
 {
@@ -133,8 +135,9 @@ int* pigfarm::get()
 
 void pigfarm::save()
 {
-    int n, kind, time;
+    int n, kind, time, deadnum, dp;
     float weight;
+    bool sick;
     pig* info;
     QFile file("save.dat");
     file.open(QIODevice::WriteOnly);
@@ -142,7 +145,9 @@ void pigfarm::save()
     for (int i=0; i<100; i++)
     {
         n = p[i].getnum();
-        out << n;
+        deadnum = p[i].getDeadNum();
+        dp = p[i].getDeadProbability();
+        out << n << deadnum << dp;
 //        qDebug()<<n<<endl;
         for (int j=0; j<n; j++)
         {
@@ -150,7 +155,8 @@ void pigfarm::save()
             kind = info->getkind();
             time = info->gettime();
             weight = info->getweight();
-            out << kind << time << weight;
+            sick = info->isSick();
+            out << kind << time << weight << sick;
 //            qDebug() <<kind << " " << time<<" "<<weight<<endl;
         }
     }
@@ -159,22 +165,112 @@ void pigfarm::save()
 
 void pigfarm::read()
 {
-    int n = 0, kind, time;
+    int n = 0, kind, time, deadnum, dp;
     float weight;
+    bool sick;
     QFile file("save.dat");
     file.open(QIODevice::ReadOnly);
     QDataStream in(&file);
     for (int i=0; i<100; i++)
     {
-        in >> n;
+        in >> n >> deadnum >> dp;
+        p[i].setDeadNum(deadnum);
+        p[i].setDeadProbability(dp);
 //        qDebug() << n <<endl;
         for (int j=0; j<n; j++)
         {
-            in >> kind >> time >> weight;
+            in >> kind >> time >> weight >> sick;
 //            qDebug() << kind << " " <<time<<" "<<weight<<endl;
-            p[i].add(kind,time,weight);
+            p[i].addback(kind, time, weight, sick);
         }
         p[i].over();
     }
     file.close();
+}
+
+void pigfarm::sickSpread()
+{
+    for (int i=0; i<100; i++)
+    {
+        p[i].diseaseSpread();
+    }
+    for (int i=0; i<100; i++)
+    {
+        if (p[i].getSickNum())
+        {
+            if (i>0&&p[i-1].getSickNum()==0)
+            {
+                p[i-1].PigGetSick();
+            }
+            if (i<99&&p[i+1].getSickNum()==0)
+            {
+                p[i+1].PigGetSick();
+            }
+        }
+    }
+    for (int i=0; i<100; i++)
+    {
+        p[i].sickToDeath();
+    }
+}
+
+int pigfarm::getTotalNum()
+{
+    int n = 0;
+    for (int i=0; i<100; i++)
+    {
+        n += p[i].getnum();
+    }
+    return n;
+}
+
+int pigfarm::getSickNum()
+{
+    int n = 0;
+    for (int i=0; i<100; i++)
+    {
+        n += p[i].getSickNum();
+    }
+    return n;
+}
+
+int pigfarm::getDeadNum()
+{
+    int n = 0;
+    for (int i=0; i<100; i++)
+    {
+        n += p[i].getDeadNum();
+    }
+    return n;
+}
+
+void pigfarm::sickStart(int v)
+{
+    int num = 0;
+    for (int i=0; i<100; i++)
+    {
+        num += p[i].getnum();
+        p[i].setDeadProbability(v);
+    }
+    if (num==0)
+    {
+        QMessageBox::critical(0 , "警告", "猪圈里没有猪", QMessageBox::Ok | QMessageBox::Default, 0,  0 );
+    }
+    else
+    {
+        int n = qrand() % 100;
+        while (p[n].getnum()==0)
+        {
+            n = qrand() % 100;
+        }
+        p[n].startSick();
+    }
+}
+
+void pigfarm::sickOver()
+{
+    for (int i=0; i<100; i++)
+    {
+        p[i].sickOver();
+    }
 }

@@ -21,6 +21,12 @@ public:
     pig* getpig(int,int);
     int* get();
 
+    void sickSpread();
+    int getTotalNum();
+    int getSickNum();
+    int getDeadNum();
+    void sickStart(int v);
+    void sickOver();
 };
 
 #endif // PIGFARM_H

@@ -2,12 +2,14 @@
 #include <QtGlobal>
 #include <QTime>
 #include <QDebug>
+#define cout qDebug()<<"["<<__FILE__":"<<__LINE__<<"]"
 
 pig::pig(float w,int k)
 {
     weight = w;
     kind = k;
     time = 0;
+    sick = false;
     next = nullptr;
 }
 
@@ -76,4 +78,17 @@ pig::pig(int k, int t, float w)
     kind = k;
     time = t;
     weight = w;
+    sick = false;
+    next = nullptr;
+}
+
+
+void pig::getsick()
+{
+    sick = true;
+}
+
+bool pig::isSick()
+{
+    return sick;
 }

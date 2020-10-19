@@ -6,6 +6,7 @@ class pig
     float weight;//斤
     int time;
     int kind;//1黑2小花3大花白
+    bool sick;
     pig* next;
 
 public:
@@ -21,6 +22,9 @@ public:
     int gettime();
 
     pig(int, int, float);
+
+    void getsick();
+    bool isSick();
 };
 
 #endif // PIG_H
