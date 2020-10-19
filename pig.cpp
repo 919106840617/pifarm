@@ -24,10 +24,10 @@ bool pig::judge()
     if (time > 365 || weight >150)
     {
         //qDebug() << kind << " " << weight << " " << time << endl;
-        return 1;
+        return true;
     }
     else
-        return 0;
+        return false;
 }
 
 void pig::setnext(pig* a)

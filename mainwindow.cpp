@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     else
     {
         time = 0;
+        sicktime = 0;
     }
     ui->time->setText(QString::number(time));
     p = new pigfarm();//初始化
@@ -48,7 +49,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lineEdit->setValidator(new QIntValidator(0, 99, this));
     ui->pigbedEdit->setValidator(new QIntValidator(0, 99, this));
-    ui->pigEdit->setValidator(new QIntValidator(0, 9, this));;
+    ui->pigEdit->setValidator(new QIntValidator(0, 9, this));
+    ui->dp_lineedit->setValidator(new QIntValidator(0, 1000, this));
     ui->stackedWidget->setCurrentIndex(0);
 
     connect(ui->console, &QPushButton::clicked,
@@ -61,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
                 else
                 {
-                    timer->start(10);
+                    timer->start(50);
                     ui->console->setText("pause");
                 }
             }
@@ -162,10 +164,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::update()
 {
+    bool check;
+    if (p->getSickNum()!=0)
+        check = true;
+    else
+        check = false;
     p->growth();
     p->sickSpread();
     time++;
-    if (p->getSickNum())
+    if (check)
         sicktime++;
     ui->time->setText(QString::number(time));
     //qDebug() << time << endl;
@@ -188,6 +195,25 @@ void MainWindow::update()
         //cout << qPrintable(str);
     }
     update4();
+    if (check)
+    {
+        if (p->getTotalNum()==0)
+        {
+            QString s;
+            s = "猪场中的猪已全部病死，用时" + QString::number(sicktime) + "天,共死猪" + QString::number(p->getDeadNum()) + "头";
+            sicktime = 0;
+            p->resetDeadNum();
+            QMessageBox::information(0 , "模拟结束", s, QMessageBox::Ok | QMessageBox::Default, 0,  0 );
+        }
+        else if (p->getSickNum()==0)
+        {
+            QString s;
+            s = "猪场中的猪瘟已消失，用时" + QString::number(sicktime) + "天,共死猪" + QString::number(p->getDeadNum()) + "头";
+            sicktime = 0;
+            p->resetDeadNum();
+            QMessageBox::information(0 , "模拟结束", s, QMessageBox::Ok | QMessageBox::Default, 0,  0 );
+        }
+    }
 }
 
 void MainWindow::on_clear_clicked()
@@ -297,7 +323,8 @@ void MainWindow::update3()
 
 void MainWindow::on_pushButton_clicked()
 {
-    p->sickStart(50);
+    int dp = ui->dp_lineedit->text().toInt();
+    p->sickStart(dp);
     sicktime = 0;
     update4();
 }
@@ -313,6 +340,22 @@ void MainWindow::update4()
 void MainWindow::on_pushButton_2_clicked()
 {
     p->sickOver();
+    if (p->getTotalNum()==0)
+    {
+        QString s;
+        s = "猪场中的猪已全部死亡，用时" + QString::number(sicktime) + "天,共死猪" + QString::number(p->getDeadNum()) + "头";
+        sicktime = 0;
+        p->resetDeadNum();
+        QMessageBox::information(0 , "模拟结束", s, QMessageBox::Ok | QMessageBox::Default, 0,  0 );
+    }
+    else
+    {
+        QString s;
+        s = "猪场中的猪瘟已消失，用时" + QString::number(sicktime) + "天,共死猪" + QString::number(p->getDeadNum()) + "头";
+        sicktime = 0;
+        p->resetDeadNum();
+        QMessageBox::information(0 , "模拟结束", s, QMessageBox::Ok | QMessageBox::Default, 0,  0 );
+    }
 }
 
 void MainWindow::on_pushButton_3_clicked()

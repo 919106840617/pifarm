@@ -27,6 +27,7 @@ public:
     int getDeadNum();
     void sickStart(int v);
     void sickOver();
+    void resetDeadNum();
 };
 
 #endif // PIGFARM_H

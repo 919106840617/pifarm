@@ -274,3 +274,11 @@ void pigfarm::sickOver()
         p[i].sickOver();
     }
 }
+
+void pigfarm::resetDeadNum()
+{
+    for (int i=0; i<100; i++)
+    {
+        p[i].setDeadNum(0);
+    }
+}

@@ -42,9 +42,9 @@ void pigbed::add()
         k = qrand() % 3 + 1;
         head = new pig(w,k);
         if(k==1)
-            black = 1;
+            black = true;
         else
-            black = 0;
+            black = false;
     }
     else
     {
@@ -65,9 +65,9 @@ void pigbed::add(int k, float w)
     {
         head = new pig(w,k);
         if(k==1)
-            black = 1;
+            black = true;
         else
-            black = 0;
+            black = false;
     }
     else
     {
@@ -342,8 +342,12 @@ void pigbed::startSick()
     int n = qrand() % num;
     for (int i=0; i<n; i++)
         p = p->getnext();
-    p->getsick();
-    sick++;
+    if (!p->isSick())
+    {
+        p->getsick();
+        sick++;
+    }
+
 }
 
 void pigbed::sickOver()
